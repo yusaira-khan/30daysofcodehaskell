@@ -54,19 +54,19 @@ putHourGlass ([[a0,a1,a2],[b1],[c0,c1,c2]]:r) =
     putStrLn ( show c2 ) >>
     putStrLn "" >>
     putHourGlass r
--- utHourGlass b =
---   putStrLn $ show b
+
+getSumOfEachHourGlass :: [[Int]] -> [Int]
+getSumOfEachHourGlass arr = 
+    getHourGlasses arr [] >>= (\hG ->
+      return $ (Data.List.foldr (+) 0) (concat hG)
+    )
 
 
 solve :: IO()
 solve = 
     readMultipleLinesAsStringList 6 >>= (\ arrTemp -> 
     let arr = Data.List.map (\x -> Data.List.map (read :: String -> Int) . words $ x) arrTemp
-    in let hG = getHourGlasses arr []
-    in let hGFlat = Data.List.map concat hG:: [[Int]]
-    in let hgSum =  Data.List.map (Data.List.foldr (+) 0) hGFlat :: [Int]
-    in let hgSumMax = Data.List.maximum hgSum
-    in putStrLn(show (hgSumMax)))
+    in putStrLn(show (Data.List.maximum $ getSumOfEachHourGlass arr)))
 
 -- putStrLn (show hG) >>
 --     putStrLn (show hGFlat) >> 
