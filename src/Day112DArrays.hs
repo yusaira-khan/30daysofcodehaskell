@@ -20,19 +20,22 @@ import System.IO.Unsafe
 readMultipleLinesAsStringList :: Int -> IO [String]
 readMultipleLinesAsStringList 0 = return []
 readMultipleLinesAsStringList n = 
-    getLine  >>= (\ line ->  
-    readMultipleLinesAsStringList (n - 1) >>= (\ rest ->
-    return (line : rest) ))
+    getLine  >>= \line ->  
+    fmap (line:) $ readMultipleLinesAsStringList (n - 1) 
+    
 
 getHourGlasses :: [[Int]] -> [[Int]] -> [[[Int]]]
-getHourGlasses (a:b:[]) acc= 
+getHourGlasses resetStack (a:b:[]) = 
     []  
-getHourGlasses ((a0:a1:[]):(b0:b1:[]):(c0:c1:[]):r) acc =
-    getHourGlasses (acc++r) []
-getHourGlasses ((a0:a1:a2:ar):b@(b0:b1:b2:br):c@(c0:c1:c2:cr):r) acc =
-    let accNew = (if  acc == [] then [b,c] else acc)
-    in 
-    [[a0,a1,a2],[b1],[c0,c1,c2]]:(getHourGlasses ((a1:a2:ar):(b1:b2:br):(c1:c2:cr):r) accNew)
+getHourGlasses resetStack ((a0:a1:[]):(b0:b1:[]):(c0:c1:[]):rest)  =
+    getHourGlasses (resetStack++rest) []
+getHourGlasses resetStack ((a0:a1:a2:ar):
+                    b@(b0:b1:b2:br):
+                    c@(c0:c1:c2:cr):
+                rest) =
+    let resetStackNew = (if  resetStack == [] then [b,c] else resetStack)
+    in [[a0,a1,a2],[b1],[c0,c1,c2]]:
+    (getHourGlasses resetStackNew ((a1:a2:ar):(b1:b2:br):(c1:c2:cr):rest))
 
 
 putHourGlass :: [[[Int]]] -> IO()
@@ -43,7 +46,7 @@ putHourGlass ([[a0,a1,a2],[b1],[c0,c1,c2]]:r) =
     putStr " " >>
     putStr ( show a1 )>>
     putStr " " >>
-    putStrLn ( show a2 )>>
+    putStrLn (show a2)>>
     putStr "  " >>
     putStr ( show b1 )>>
     putStrLn "  " >>
@@ -57,16 +60,15 @@ putHourGlass ([[a0,a1,a2],[b1],[c0,c1,c2]]:r) =
 
 getSumOfEachHourGlass :: [[Int]] -> [Int]
 getSumOfEachHourGlass arr = 
-    getHourGlasses arr [] >>= (\hG ->
-      return $ (Data.List.foldr (+) 0) (concat hG)
-    )
+    fmap (Data.List.foldr (+) 0 . concat) $ getHourGlasses [] arr
+    
 
 
 solve :: IO()
 solve = 
     readMultipleLinesAsStringList 6 >>= (\ arrTemp -> 
     let arr = Data.List.map (\x -> Data.List.map (read :: String -> Int) . words $ x) arrTemp
-    in putStrLn(show (Data.List.maximum $ getSumOfEachHourGlass arr)))
+    in putStrLn(show (Data.List.maximum . getSumOfEachHourGlass $ arr)))
 
 -- putStrLn (show hG) >>
 --     putStrLn (show hGFlat) >> 
