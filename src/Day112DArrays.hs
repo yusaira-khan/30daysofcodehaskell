@@ -5,6 +5,7 @@ solve
 ) where
 
 import Control.Monad
+import Control.Applicative
 import Data.Array
 import Data.Bits
 import Data.List
@@ -18,10 +19,9 @@ import System.IO.Unsafe
 
 
 readMultipleLinesAsStringList :: Int -> IO [String]
-readMultipleLinesAsStringList 0 = return []
+readMultipleLinesAsStringList 0 = pure []
 readMultipleLinesAsStringList n = 
-    getLine  >>= \line ->  
-    fmap (line:) $ readMultipleLinesAsStringList (n - 1) 
+    (:) <$> getLine  <*> readMultipleLinesAsStringList (n - 1) 
     
 
 getHourGlasses :: [[Int]] -> [[Int]] -> [[[Int]]]
