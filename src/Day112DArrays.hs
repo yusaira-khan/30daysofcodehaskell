@@ -64,9 +64,7 @@ getSumOfEachHourGlass arr =
     
 parseStringsToInts :: [String] -> [[Int]]
 parseStringsToInts arrTemp = 
-        arrTemp >>= \x  
-        words x >>= \y 
-        return $ return $ (read :: String -> Int) y
+        (\x -> (read :: String -> Int) <$> words x) <$> arrTemp
 --    Data.List.map (\x -> Data.List.map (read :: String -> Int) . words $ x) arrTemp
 
 
