@@ -28,7 +28,7 @@ getHourGlasses :: [[Int]] -> [[Int]] -> [[[Int]]]
 getHourGlasses resetStack (a:b:[]) = 
     []  
 getHourGlasses resetStack ((a0:a1:[]):(b0:b1:[]):(c0:c1:[]):rest)  =
-    getHourGlasses (resetStack++rest) []
+    getHourGlasses [] (resetStack++rest)
 getHourGlasses resetStack ((a0:a1:a2:ar):
                     b@(b0:b1:b2:br):
                     c@(c0:c1:c2:cr):
@@ -59,15 +59,21 @@ putHourGlass ([[a0,a1,a2],[b1],[c0,c1,c2]]:r) =
     putHourGlass r
 
 getSumOfEachHourGlass :: [[Int]] -> [Int]
-getSumOfEachHourGlass arr = 
+getSumOfEachHourGlass arr =
     fmap (Data.List.foldr (+) 0 . concat) $ getHourGlasses [] arr
     
+parseStringsToInts :: [String] -> [[Int]]
+parseStringsToInts arrTemp = 
+        arrTemp >>= \x  
+        words x >>= \y 
+        return $ return $ (read :: String -> Int) y
+--    Data.List.map (\x -> Data.List.map (read :: String -> Int) . words $ x) arrTemp
 
 
 solve :: IO()
 solve = 
     readMultipleLinesAsStringList 6 >>= (\ arrTemp -> 
-    let arr = Data.List.map (\x -> Data.List.map (read :: String -> Int) . words $ x) arrTemp
+    let arr = parseStringsToInts arrTemp
     in putStrLn(show (Data.List.maximum . getSumOfEachHourGlass $ arr)))
 
 -- putStrLn (show hG) >>
