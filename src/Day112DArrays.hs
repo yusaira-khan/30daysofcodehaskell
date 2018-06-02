@@ -63,9 +63,9 @@ getSumOfEachHourGlass arr =
     fmap (Data.List.foldr (+) 0 . concat) $ getHourGlasses [] arr
     
 parseStringsToInts :: [String] -> [[Int]]
-parseStringsToInts arrTemp = 
-        (\x -> (read :: String -> Int) <$> words x) <$> arrTemp
---    Data.List.map (\x -> Data.List.map (read :: String -> Int) . words $ x) arrTemp
+parseStringsToInts =
+        fmap (\x -> (read :: String -> Int) <$> words x)
+--      map (\x -> map (read :: String -> Int) . words $ x) arrTemp
 
 
 solve :: IO()
