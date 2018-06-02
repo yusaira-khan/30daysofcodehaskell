@@ -21,7 +21,7 @@ import System.IO.Unsafe
 readMultipleLinesAsStringList :: Int -> IO [String]
 readMultipleLinesAsStringList 0 = pure []
 readMultipleLinesAsStringList n = 
-    (:) <$> getLine  <*> readMultipleLinesAsStringList (n - 1) 
+    liftA2 (:)  getLine $ readMultipleLinesAsStringList (n - 1) 
     
 
 getHourGlasses :: [[Int]] -> [[Int]] -> [[[Int]]]
